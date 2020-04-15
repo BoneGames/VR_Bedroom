@@ -8,6 +8,7 @@ TagManager:
   - renderLayer
   - surface
   - Grid
+  - wall
   layers:
   - Default
   - TransparentFX

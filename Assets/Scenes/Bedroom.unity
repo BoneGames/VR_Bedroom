@@ -797,7 +797,7 @@ GameObject:
   - component: {fileID: 437410839}
   m_Layer: 0
   m_Name: Door_Wall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -809,13 +809,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437410837}
-  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
   m_LocalPosition: {x: 0, y: 2, z: -2}
   m_LocalScale: {x: 0.4, y: 1, z: 0.4}
   m_Children: []
   m_Father: {fileID: 655837872}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 90}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 90}
 --- !u!64 &437410839
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -891,7 +891,7 @@ PrefabInstance:
     - target: {fileID: 8910851444161308851, guid: e49fbe1cf2b79ec4f91829c9d0456dc6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 8910851444161308851, guid: e49fbe1cf2b79ec4f91829c9d0456dc6,
         type: 3}
@@ -901,7 +901,7 @@ PrefabInstance:
     - target: {fileID: 8910851444161308851, guid: e49fbe1cf2b79ec4f91829c9d0456dc6,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 8910851444161308851, guid: e49fbe1cf2b79ec4f91829c9d0456dc6,
         type: 3}
@@ -952,11 +952,16 @@ PrefabInstance:
         type: 3}
       propertyPath: targetSurface
       value: 
-      objectReference: {fileID: 437410838}
+      objectReference: {fileID: 297489508}
     - target: {fileID: 8910851444161308850, guid: e49fbe1cf2b79ec4f91829c9d0456dc6,
         type: 3}
       propertyPath: squareSize
-      value: 3
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8910851444161308850, guid: e49fbe1cf2b79ec4f91829c9d0456dc6,
+        type: 3}
+      propertyPath: wallPlay
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e49fbe1cf2b79ec4f91829c9d0456dc6, type: 3}
@@ -1684,7 +1689,7 @@ GameObject:
   - component: {fileID: 650456448}
   m_Layer: 0
   m_Name: Cupboard_Wall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1696,13 +1701,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 650456446}
-  m_LocalRotation: {x: -0.7071068, y: -0.7071068, z: 0, w: 0}
+  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: -0.5}
   m_LocalPosition: {x: -2.1, y: 2, z: 0}
   m_LocalScale: {x: 0.4, y: 1, z: 0.4}
   m_Children: []
   m_Father: {fileID: 655837872}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 90}
+  m_LocalEulerAnglesHint: {x: 90, y: -180, z: 90}
 --- !u!64 &650456448
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2937,7 +2942,7 @@ GameObject:
   - component: {fileID: 1090464916}
   m_Layer: 0
   m_Name: Flag_Wall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2949,13 +2954,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1090464914}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: 2, y: 2, z: 0}
   m_LocalScale: {x: 0.4, y: 1, z: 0.4}
   m_Children: []
   m_Father: {fileID: 655837872}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
 --- !u!64 &1090464916
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3563,7 +3568,7 @@ GameObject:
   - component: {fileID: 1514493116}
   m_Layer: 0
   m_Name: Window_Wall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3575,13 +3580,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1514493114}
-  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalRotation: {x: 0, y: -0.70710677, z: 0.70710677, w: 0}
   m_LocalPosition: {x: 0, y: 2, z: 2}
   m_LocalScale: {x: 0.4, y: 1, z: 0.4}
   m_Children: []
   m_Father: {fileID: 655837872}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 90}
+  m_LocalEulerAnglesHint: {x: 90, y: -90, z: 90}
 --- !u!64 &1514493116
 MeshCollider:
   m_ObjectHideFlags: 0

@@ -33,13 +33,16 @@ public class CardBoardCamController : MonoBehaviour
         {
             text.text = "no touch editor";
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.RightShift))
         {
-            transform.Rotate(new Vector3(0, -turnSpeed, 0));
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            transform.Rotate(new Vector3(0, turnSpeed, 0));
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                transform.Rotate(new Vector3(0, -turnSpeed, 0));
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                transform.Rotate(new Vector3(0, turnSpeed, 0));
+            }
         }
 #endif
 

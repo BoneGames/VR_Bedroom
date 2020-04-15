@@ -66,6 +66,7 @@ public class Driver : MonoBehaviour
     [Range(0.01f, 1f)]
     public float planeScale;
     public Transform targetSurface;
+    public bool wallPlay;
 
     //
     public Texture2D pet;
@@ -101,7 +102,14 @@ public class Driver : MonoBehaviour
     {
         if (gridParent == null)
         {
-            InitPlaneLayout();
+            if (wallPlay)
+            {
+                InitPlaneLayout_Wall_Select();
+            }
+            else
+            {
+                InitPlaneLayout_Flat_Grid();
+            }
         }
         SetBaseSurfaceColors();
 
@@ -119,17 +127,12 @@ public class Driver : MonoBehaviour
     }
 
     [Button]
-    void InitPlaneLayout()
+    void InitPlaneLayout_Flat_Grid()
     {
-        Debug.Log("IPL");
         gridParent = new GameObject();
         gridParent.transform.position = targetSurface.position;
-        //gridParent.transform.localScale = targetSurface.localScale;
         gridParent.transform.rotation = targetSurface.rotation;
-        //gridParent.transform.forward = targetSurface.right;
-        //gridParent.transform.up = targetSurface.up;
-        //gridParent.transform.forward = targetSurface.right * -1;
-        //gridParent.transform.position = Vector3.zero;
+
         gridParent.name = "Grid";
         gridParent.tag = "Grid";
 
@@ -137,12 +140,14 @@ public class Driver : MonoBehaviour
         float zOffset = (planePrefab.transform.localScale.z * 10 * planeScale);
 
         //Quaternion parentRot = gridParent.transform.rotation;
-
         float xCentreOffset = ((squareSize - 1) * xOffset + (layoutBuffer * (squareSize - 1) * planeScale)) * 0.5f;
+
         float zCentreOffset = ((squareSize - 1) * zOffset + (layoutBuffer * (squareSize - 1) * planeScale)) * 0.5f;
 
-        Vector3 sizeOffset = new Vector3(xCentreOffset, zCentreOffset);
-        gridParent.transform.position -= sizeOffset;
+
+        Vector3 sizeOffset = new Vector3(xCentreOffset, 0, zCentreOffset);
+        gridParent.transform.Translate(-sizeOffset, Space.Self);
+        //gridParent.transform.localPosition += sizeOffset;
         for (int i = 0; i < squareSize; i++)
         {
             for (int j = 0; j < squareSize; j++)
@@ -152,6 +157,33 @@ public class Driver : MonoBehaviour
                 go.transform.localPosition = position;
                 go.transform.localScale *= planeScale;
             }
+        }
+
+
+    }
+
+    [Button]
+    void InitPlaneLayout_Wall_Select()
+    {
+        gridParent = new GameObject();
+        gridParent.name = "Grid";
+        gridParent.tag = "Grid";
+        List<GameObject> Walls = GameObject.FindGameObjectsWithTag("wall").ToList();
+        // if we don't have enough walls for
+        while (Walls.Count > (squareSize * squareSize))
+        {
+            squareSize++;
+        }
+
+        for (int i = 0; i < squareSize * squareSize; i++)
+        {
+            GameObject _wall = Walls[i];
+
+            Vector3 position = _wall.transform.position;
+            GameObject go = Instantiate(planePrefab, gridParent.transform);
+            go.transform.position = position;
+            go.transform.rotation = _wall.transform.rotation;
+            go.transform.localScale = _wall.transform.localScale;
         }
 
 
@@ -718,22 +750,24 @@ public class Driver : MonoBehaviour
 
             moveDelta = Mathf.Clamp(moveDelta, 1, 100);
 
-
-            if (Input.GetKey(KeyCode.UpArrow))
+            if (Input.GetKey(KeyCode.LeftShift))
             {
-                newOffset = new Vector2Int(newOffset.x, newOffset.y + moveDelta);
-            }
-            if (Input.GetKey(KeyCode.DownArrow))
-            {
-                newOffset = new Vector2Int(newOffset.x, newOffset.y - moveDelta);
-            }
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                newOffset = new Vector2Int(newOffset.x - moveDelta, newOffset.y);
-            }
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                newOffset = new Vector2Int(newOffset.x + moveDelta, newOffset.y);
+                if (Input.GetKey(KeyCode.UpArrow))
+                {
+                    newOffset = new Vector2Int(newOffset.x, newOffset.y + moveDelta);
+                }
+                if (Input.GetKey(KeyCode.DownArrow))
+                {
+                    newOffset = new Vector2Int(newOffset.x, newOffset.y - moveDelta);
+                }
+                if (Input.GetKey(KeyCode.LeftArrow))
+                {
+                    newOffset = new Vector2Int(newOffset.x - moveDelta, newOffset.y);
+                }
+                if (Input.GetKey(KeyCode.RightArrow))
+                {
+                    newOffset = new Vector2Int(newOffset.x + moveDelta, newOffset.y);
+                }
             }
             if (offset != newOffset)
             {
