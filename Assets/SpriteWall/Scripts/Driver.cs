@@ -43,6 +43,19 @@ public class Driver : MonoBehaviour
             this.fruitLoc = fruitLoc;
         }
     }
+    public struct CanvasPlacement
+    {
+        public Surface surface;
+        public Vector2Int offset;
+        public Texture2D petPortion;
+
+        public CanvasPlacement(Surface surface, Vector2Int offset, Texture2D petPortion)
+        {
+            this.surface = surface;
+            this.offset = offset;
+            this.petPortion = petPortion;
+        }
+    }
 
     // Setup
     public int layoutBuffer;
@@ -50,6 +63,9 @@ public class Driver : MonoBehaviour
     public Color bgCol, renderLayerCol;
     public Vector2Int res;
     public GameObject planePrefab;
+    [Range(0.01f, 1f)]
+    public float planeScale;
+    public Transform targetSurface;
 
     //
     public Texture2D pet;
@@ -81,22 +97,9 @@ public class Driver : MonoBehaviour
     public Texture2D[] food;
 
 
-    public struct CanvasPlacement
-    {
-        public Surface surface;
-        public Vector2Int offset;
-        public Texture2D petPortion;
-
-        public CanvasPlacement(Surface surface, Vector2Int offset, Texture2D petPortion)
-        {
-            this.surface = surface;
-            this.offset = offset;
-            this.petPortion = petPortion;
-        }
-    }
     void Start()
     {
-        if(gridParent == null)
+        if (gridParent == null)
         {
             InitPlaneLayout();
         }
@@ -120,21 +123,38 @@ public class Driver : MonoBehaviour
     {
         Debug.Log("IPL");
         gridParent = new GameObject();
-        gridParent.transform.position = Vector3.zero;
+        gridParent.transform.position = targetSurface.position;
+        //gridParent.transform.localScale = targetSurface.localScale;
+        gridParent.transform.rotation = targetSurface.rotation;
+        //gridParent.transform.forward = targetSurface.right;
+        //gridParent.transform.up = targetSurface.up;
+        //gridParent.transform.forward = targetSurface.right * -1;
+        //gridParent.transform.position = Vector3.zero;
         gridParent.name = "Grid";
         gridParent.tag = "Grid";
 
-        int xOffset = (int)planePrefab.transform.localScale.x * 10;
-        int yOffset = (int)planePrefab.transform.localScale.y * 10;
+        float xOffset = (planePrefab.transform.localScale.x * 10 * planeScale);
+        float zOffset = (planePrefab.transform.localScale.z * 10 * planeScale);
 
+        //Quaternion parentRot = gridParent.transform.rotation;
+
+        float xCentreOffset = ((squareSize - 1) * xOffset + (layoutBuffer * (squareSize - 1) * planeScale)) * 0.5f;
+        float zCentreOffset = ((squareSize - 1) * zOffset + (layoutBuffer * (squareSize - 1) * planeScale)) * 0.5f;
+
+        Vector3 sizeOffset = new Vector3(xCentreOffset, zCentreOffset);
+        gridParent.transform.position -= sizeOffset;
         for (int i = 0; i < squareSize; i++)
         {
             for (int j = 0; j < squareSize; j++)
             {
-                Vector3 position = new Vector3((i * xOffset) + (layoutBuffer * i), 0, (j * yOffset) + (layoutBuffer * j));
-                Instantiate(planePrefab, position, Quaternion.identity, gridParent.transform);
+                Vector3 position = new Vector3((i * xOffset) + (layoutBuffer * i * planeScale), 0, (j * zOffset) + (layoutBuffer * j * planeScale));
+                GameObject go = Instantiate(planePrefab, gridParent.transform);
+                go.transform.localPosition = position;
+                go.transform.localScale *= planeScale;
             }
         }
+
+
     }
 
     Vector2Int GetRandomSurfaceLocation()
@@ -158,7 +178,7 @@ public class Driver : MonoBehaviour
         // write colors
         for (int i = 0; i < baseBgSurface.width; i++)
         {
-            for (int j = 0; j < baseBgSurface.height; j++)
+            for (int j = -baseBgSurface.height; j < 0; j++)
             {
                 baseBgSurface.SetPixel(i, j, bgCol);
                 baseRenderSurface.SetPixel(i, j, renderLayerCol);
@@ -202,8 +222,8 @@ public class Driver : MonoBehaviour
             }
         }
         // init pet sprite
-        if(animated)
-        pet = petFrames[0];
+        if (animated)
+            pet = petFrames[0];
         // set aspect ratio
         petAspectRatio = pet.width / pet.height;
     }
@@ -400,7 +420,7 @@ public class Driver : MonoBehaviour
         // apply texture to render layer material
         render_Mat.mainTexture = newRenderTex;
         // create struct
-        Surface s = new Surface(numberedBG, newRenderTex, renderColArray, new Vector2Int(xGrid, yGrid), render_Mat, new Vector4Class(0,0,0,0));
+        Surface s = new Surface(numberedBG, newRenderTex, renderColArray, new Vector2Int(xGrid, yGrid), render_Mat, new Vector4Class(0, 0, 0, 0));
 
         return s;
     }
@@ -688,8 +708,8 @@ public class Driver : MonoBehaviour
 
     void Update()
     {
-        if(animated)
-        AnimateSprite();
+        if (animated)
+            AnimateSprite();
 
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
         {

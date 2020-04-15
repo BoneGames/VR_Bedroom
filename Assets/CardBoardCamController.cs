@@ -9,6 +9,9 @@ public class CardBoardCamController : MonoBehaviour
     public float turnSpeed;
     CharacterController cc;
     public Text text;
+    public float clickTimer;
+    bool doubleClick => clickTimer < doubleClickWindow;
+    public float doubleClickWindow;
     void Start()
     {
         cc = GetComponent<CharacterController>();
@@ -41,18 +44,33 @@ public class CardBoardCamController : MonoBehaviour
 #endif
 
 #if UNITY_ANDROID
-        if (Input.touchCount > 0)
+        // increment clickTimer
+        clickTimer += Time.deltaTime;
+        if (Input.GetMouseButton(0))
         {
+            // ui feedback
             text.text = "touch android";
-            Vector3 forward = Camera.main.transform.forward;
-            forward.y = 0;
-            cc.SimpleMove(forward * 50 * Time.deltaTime);
 
-            //transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed);
+            // set move direction
+            Vector3 dir = Camera.main.transform.forward;
+            if (doubleClick)
+            {
+                // move backwards if double click
+                dir *= -1;
+                clickTimer = 0;
+            }
+            dir.y = 0;
+
+            cc.SimpleMove(dir * 50 * Time.deltaTime);
+            // reset click timer
         }
         else
         {
             text.text = "no touch android";
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            clickTimer = 0;
         }
 #endif
     }
