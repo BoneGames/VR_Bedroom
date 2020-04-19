@@ -12,11 +12,29 @@ public class CardBoardCamController : MonoBehaviour
     public float clickTimer;
     bool doubleClick => clickTimer < doubleClickWindow;
     public float doubleClickWindow;
+    public UnityStandardAssets.Characters.FirstPerson.MouseLook mouseLook;
+    Camera cam;
     void Start()
     {
+#if UNITY_WEBGL
+        cam = Camera.main;
+        mouseLook.Init(transform, cam.transform);
+#endif
         cc = GetComponent<CharacterController>();
         text = GameObject.FindGameObjectWithTag("debugText").GetComponent<Text>();
         text.text = "start";
+    }
+
+    private void RotateView()
+    {
+        mouseLook.LookRotation(transform, cam.transform);
+    }
+
+    private void FixedUpdate()
+    {
+#if UNITY_WEBGL
+        mouseLook.UpdateCursorLock();
+#endif
     }
 
     // Update is called once per frame
@@ -47,6 +65,37 @@ public class CardBoardCamController : MonoBehaviour
 #endif
 
 #if UNITY_ANDROID
+        // increment clickTimer
+        clickTimer += Time.deltaTime;
+        if (Input.GetMouseButton(0))
+        {
+            // ui feedback
+            text.text = "touch android";
+
+            // set move direction
+            Vector3 dir = Camera.main.transform.forward;
+            if (doubleClick)
+            {
+                // move backwards if double click
+                dir *= -1;
+                clickTimer = 0;
+            }
+            dir.y = 0;
+
+            cc.SimpleMove(dir * 50 * Time.deltaTime);
+            // reset click timer
+        }
+        else
+        {
+            text.text = "no touch android";
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            clickTimer = 0;
+        }
+#endif
+#if UNITY_WEBGL
+        RotateView();
         // increment clickTimer
         clickTimer += Time.deltaTime;
         if (Input.GetMouseButton(0))

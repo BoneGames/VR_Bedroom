@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 5005445705795702944}
   - component: {fileID: 5005445705795702945}
   m_Layer: 0
-  m_Name: BG_Layer
+  m_Name: BG_Layer_Double
   m_TagString: surface
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

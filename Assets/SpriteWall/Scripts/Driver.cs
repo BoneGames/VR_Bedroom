@@ -62,27 +62,29 @@ public class Driver : MonoBehaviour
     public int squareSize;
     public Color bgCol, renderLayerCol;
     public Vector2Int res;
-    public GameObject planePrefab;
+    public GameObject planePrefabSingle;
+    public GameObject planePrefabDouble;
     [Range(0.01f, 1f)]
     public float planeScale;
     public Transform targetSurface;
     public bool wallPlay;
+    public bool numberedBGs;
 
     //
     public Texture2D pet;
     public bool animated;
     public int moveSpeed;
     float petAspectRatio;
-    [ShowIf(nameof(animated))]
+    //[ShowIf(nameof(animated))]
     public float spriteChangeCounter;
-    [ShowIf(nameof(animated))]
+    //[ShowIf(nameof(animated))]
     public float spriteChangeDelay;
     public int growthRate;
     public bool showTrail;
 
-    [ShowIf(nameof(animated))]
+    //[ShowIf(nameof(animated))]
     public List<Texture2D> petFrames = new List<Texture2D>();
-    [ShowIf(nameof(animated))]
+    //[ShowIf(nameof(animated))]
     public Vector2Int cellSlicePartitions;
     int petFrameIndex;
     Vector2Int spriteSliceOffset;
@@ -104,7 +106,9 @@ public class Driver : MonoBehaviour
         {
             if (wallPlay)
             {
+
                 InitPlaneLayout_Wall_Select();
+
             }
             else
             {
@@ -126,7 +130,7 @@ public class Driver : MonoBehaviour
         ConfigurePetDivisions();
     }
 
-    [Button]
+    // [Button]
     void InitPlaneLayout_Flat_Grid()
     {
         gridParent = new GameObject();
@@ -136,8 +140,8 @@ public class Driver : MonoBehaviour
         gridParent.name = "Grid";
         gridParent.tag = "Grid";
 
-        float xOffset = (planePrefab.transform.localScale.x * 10 * planeScale);
-        float zOffset = (planePrefab.transform.localScale.z * 10 * planeScale);
+        float xOffset = (planePrefabDouble.transform.localScale.x * 10 * planeScale);
+        float zOffset = (planePrefabDouble.transform.localScale.z * 10 * planeScale);
 
         //Quaternion parentRot = gridParent.transform.rotation;
         float xCentreOffset = ((squareSize - 1) * xOffset + (layoutBuffer * (squareSize - 1) * planeScale)) * 0.5f;
@@ -153,7 +157,7 @@ public class Driver : MonoBehaviour
             for (int j = 0; j < squareSize; j++)
             {
                 Vector3 position = new Vector3((i * xOffset) + (layoutBuffer * i * planeScale), 0, (j * zOffset) + (layoutBuffer * j * planeScale));
-                GameObject go = Instantiate(planePrefab, gridParent.transform);
+                GameObject go = Instantiate(planePrefabDouble, gridParent.transform);
                 go.transform.localPosition = position;
                 go.transform.localScale *= planeScale;
             }
@@ -162,28 +166,25 @@ public class Driver : MonoBehaviour
 
     }
 
-    [Button]
+    // [Button]
     void InitPlaneLayout_Wall_Select()
     {
-        gridParent = new GameObject();
-        gridParent.name = "Grid";
-        gridParent.tag = "Grid";
         List<GameObject> Walls = GameObject.FindGameObjectsWithTag("wall").ToList();
         // if we don't have enough walls for
         while (Walls.Count > (squareSize * squareSize))
         {
             squareSize++;
         }
-
         for (int i = 0; i < squareSize * squareSize; i++)
         {
             GameObject _wall = Walls[i];
-
+            _wall.transform.tag = "surface";
             Vector3 position = _wall.transform.position;
-            GameObject go = Instantiate(planePrefab, gridParent.transform);
+            GameObject go = Instantiate(planePrefabSingle, _wall.transform);
+
             go.transform.position = position;
             go.transform.rotation = _wall.transform.rotation;
-            go.transform.localScale = _wall.transform.localScale;
+            // go.transform.localScale = _wall.transform.localScale;
         }
 
 
@@ -394,7 +395,7 @@ public class Driver : MonoBehaviour
         surfaceGrid[loc.x][loc.y] = new Surface(surface.bg, surface.renderLayer, newBaseRenderColArray, surface.gridLoc, surface.renderMat, surface.fruitLoc);
     }
 
-    [Button]
+    //[Button]
     public void InsertFruit()
     {
         // grab random surface
@@ -441,10 +442,19 @@ public class Driver : MonoBehaviour
     }
     Surface InitSurface(int index, int xGrid, int yGrid, GameObject item)
     {
-        // get numbered BG texture
-        Texture2D numberedBG = GetNumberedBgTex(index);
-        // apply it to be material
-        item.GetComponent<Renderer>().materials[0].mainTexture = numberedBG;
+        Texture2D bg;
+        if (numberedBGs)
+        {
+            // get numbered BG texture
+            bg = GetNumberedBgTex(index);
+
+            // apply it to be material
+            item.GetComponent<Renderer>().materials[0].mainTexture = bg;
+        }
+        else
+        {
+            bg = (Texture2D)item.GetComponent<Renderer>().material.mainTexture;
+        }
         // create new render layer tex
         Texture2D newRenderTex = GetTransTex();
         // get ref to material
@@ -452,7 +462,7 @@ public class Driver : MonoBehaviour
         // apply texture to render layer material
         render_Mat.mainTexture = newRenderTex;
         // create struct
-        Surface s = new Surface(numberedBG, newRenderTex, renderColArray, new Vector2Int(xGrid, yGrid), render_Mat, new Vector4Class(0, 0, 0, 0));
+        Surface s = new Surface(bg, newRenderTex, renderColArray, new Vector2Int(xGrid, yGrid), render_Mat, new Vector4Class(0, 0, 0, 0));
 
         return s;
     }
@@ -464,44 +474,20 @@ public class Driver : MonoBehaviour
         System.Random rnd = new System.Random();
         surfaceBGs.OrderBy(x => rnd.Next());
 
-        int closestSqr = 0;
-        int remainder = 0;
-
-        for (int i = 1; i < surfaceBGs.Length; i++)
-        {
-            int sqrTest = (int)Mathf.Pow(i, 2) - surfaceBGs.Length;
-            if (sqrTest == 0)
-            {
-                closestSqr = i;
-                break;
-            }
-            else if (sqrTest > 0)
-            {
-                closestSqr = i;
-                remainder = sqrTest;
-                break;
-            }
-        }
 
         int counter = 0;
-        for (int i = 0; i < closestSqr; i++)
+        for (int i = 0; i < squareSize; i++)
         {
             // init list
             List<Surface> newSurfaceList = new List<Surface>();
             surfaceGrid.Add(newSurfaceList);
-            for (int j = 0; j < closestSqr; j++)
+            for (int j = 0; j < squareSize; j++)
             {
                 Surface s = InitSurface(counter, i, j, surfaceBGs[counter]);
                 newSurfaceList.Add(s);
                 counter++;
             }
         }
-        // ad remainders
-        //for (int i = 0; i < remainder; i++)
-        //{
-        //    surfaceGrid[i].Add((Texture2D)bgRends[counter].mainTexture);
-        //    counter++;
-        //}
     }
 
 
